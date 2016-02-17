@@ -130,11 +130,13 @@ namespace wstool
 			try {
 				var aam = new ApplicationActivationManager();
 				UInt32 id;
-				aam.ActivateApplication(appUserModelId, null, ActivateOptions.None, out id);
+                DebugTool.EnableDebug(windowsAppName);
+                DebugTool.CoAllowSetForegroundWindow(System.Runtime.InteropServices.Marshal.GetIUnknownForObject(aam), IntPtr.Zero);
+                aam.ActivateApplication(appUserModelId, null, ActivateOptions.None, out id);
 				Console.WriteLine(id);
-			} catch (System.Runtime.InteropServices.COMException) {
-				Console.WriteLine("Could not find version " + version + " of application " + appid + " in the registry. Is the application installed?");
-				return 1;
+			} catch (System.Runtime.InteropServices.COMException e) {
+				Console.WriteLine("Failed to activate application " + appid + ". Exception: " + e.ToString());
+				return 2;
 			}
 
 			return 0;
